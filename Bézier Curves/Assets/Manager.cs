@@ -70,7 +70,7 @@ public class Manager : MonoBehaviour
             }
         }
         //BezierPoint = Instantiate(BezierPointPrefab, startPointList[0].transform.position, Quaternion.identity);
-        //StartCoroutine(drawBezierCurve(0));
+        //StartCoroutine(drawBezierCurve(0)); help
         for(int i=0; i< 10000; i++){
             BezierPoint = Instantiate(BezierPointPrefab, BezierCurve(i*0.0001f), Quaternion.identity);
         }

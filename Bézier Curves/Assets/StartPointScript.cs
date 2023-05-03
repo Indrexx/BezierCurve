@@ -17,7 +17,7 @@ public class StartPointScript : MonoBehaviour
 
     void Start()
     {
-        points = GameObject.Find("Manager").GetComponent<Manager>().startPointList;
+        points = GameObject.Find("GameManager").GetComponent<Manager>().startPointList;
 
         if(startPointNumber != 0)
         {

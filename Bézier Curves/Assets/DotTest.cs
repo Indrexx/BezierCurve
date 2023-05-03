@@ -29,7 +29,7 @@ public class DotTest : MonoBehaviour
     void Start()
     {
         Physics.IgnoreLayerCollision(0,0, true);
-        manager = GameObject.Find("Manager").GetComponent<Manager>();
+        manager = GameObject.Find("GameManager").GetComponent<Manager>();
         manager.allDots.Add(gameObject);
         cc = gameObject.GetComponent<CharacterController>();
 
