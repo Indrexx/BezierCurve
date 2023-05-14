@@ -17,7 +17,14 @@ public class Manager : MonoBehaviour
     public int currentLayer;
     public GameObject mainDot;
     public GameObject BezierPoint;
+    public GameObject CurvePoint;
     public GameObject BezierPointPrefab;
+
+    [SerializeField] private SetX x;
+    [SerializeField] private SetVector[] vectors;
+    [SerializeField] private GameObject formular;
+    [SerializeField] private GameObject instructions;
+
     GameObject point;
     int n;
     bool canClick;
@@ -35,10 +42,30 @@ public class Manager : MonoBehaviour
         {
             click();
         }
-        if(Input.GetButtonDown("Jump") && !SimStarted)
+        if(Input.GetKeyDown("v") && !SimStarted)
         {
             startSim();
             canClick = false;
+            SimStarted = true;
+            Destroy(instructions);
+            Destroy(formular);
+        }
+        if(Input.GetKeyDown("d") && !SimStarted)
+        {
+            drawLine();
+            canClick = false;
+            SimStarted = true;
+            Destroy(instructions);
+            Destroy(formular);
+        }
+        if(Input.GetKeyDown("f") && !SimStarted)
+        {
+            if(startPointCount == 4){
+                startFormular();
+                canClick = false;
+                SimStarted = true;
+                Destroy(instructions);
+            }
         }
         if(Input.GetKeyDown("r"))
         {
@@ -58,7 +85,13 @@ public class Manager : MonoBehaviour
         point = Instantiate(startPoint, mouse, Quaternion.identity);
         point.GetComponent<StartPointScript>().startPointNumber = startPointCount;
         startPointList.Add(point);
+        if(startPointCount <4){
+            vectors[startPointCount].setVec(point.transform.position.x, point.transform.position.y);
+        }else{
+            Destroy(formular);
+        }
         startPointCount++;
+        
     }
 
     public void startSim()
@@ -69,11 +102,17 @@ public class Manager : MonoBehaviour
                 startPointList[n].GetComponent<StartPointScript>().moveDots();
             }
         }
-        //BezierPoint = Instantiate(BezierPointPrefab, startPointList[0].transform.position, Quaternion.identity);
-        //StartCoroutine(drawBezierCurve(0));
+    }
+    public void drawLine()
+    {
         for(int i=0; i< 1000; i++){
-            BezierPoint = Instantiate(BezierPointPrefab, BezierCurve(i*0.001f), Quaternion.identity);
+            BezierPoint = Instantiate(CurvePoint, BezierCurve(i*0.001f), Quaternion.identity);
         }
+    }
+    public void startFormular()
+    {
+        BezierPoint = Instantiate(BezierPointPrefab, startPointList[0].transform.position, Quaternion.identity);
+        StartCoroutine(drawBezierCurve(0));
     }
 
     Vector2 BezierCurve(float x){
@@ -109,12 +148,20 @@ public class Manager : MonoBehaviour
         return ret;
     }
     IEnumerator drawBezierCurve(float x){
+        if(formular != null){
+            this.x.setX(x);
+            vectors[4].setVec(BezierCurve(x).x, BezierCurve(x).y);
+        }
         BezierPoint.transform.position = BezierCurve(x);
-        yield return new WaitForEndOfFrame();
-        if(x<0.99f){
-            StartCoroutine(drawBezierCurve(x+0.01f));
+        yield return new WaitForSeconds(0.01f);
+        if(x<0.999f){
+            StartCoroutine(drawBezierCurve(x+0.001f));
         }else{
             BezierPoint.transform.position = startPointList[startPointCount-1].transform.position;
+            if(formular != null){
+                vectors[4].setVec(BezierCurve(1).x, BezierCurve(1).y);
+                this.x.setX(1);
+            }
         }
     }
     public void Restart()
