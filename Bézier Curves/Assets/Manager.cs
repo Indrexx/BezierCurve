@@ -126,9 +126,9 @@ public class Manager : MonoBehaviour
             vectors[i].x= startPointList[i].transform.position.x;
             vectors[i].y= startPointList[i].transform.position.y;
         }
-        for(int k = 0; k<=n; k++){
-            temp =  Binomial(n,k) * Mathf.Pow(a,n-k)*Mathf.Pow(b,k);
-            ret.x += (float)temp*vectors[k].x;
+        for(int k = 0; k<=n; k++){                                              //diese for-Schleife ist die Summe
+            temp =  Binomial(n,k) * Mathf.Pow(a,n-k)*Mathf.Pow(b,k);            //temp ist jeweils ein Bernsteinpolynom
+            ret.x += (float)temp*vectors[k].x;                                  //hier wird das bernsteinpolynom noch mit dem Vektor multipliziert
             ret.y += (float)temp*vectors[k].y;
         }
         return ret;
@@ -153,9 +153,9 @@ public class Manager : MonoBehaviour
             vectors[4].setVec(BezierCurve(x).x, BezierCurve(x).y);
         }
         BezierPoint.transform.position = BezierCurve(x);
-        yield return new WaitForSeconds(0.01f);
+        yield return new WaitForEndOfFrame();
         if(x<0.999f){
-            StartCoroutine(drawBezierCurve(x+0.001f));
+            StartCoroutine(drawBezierCurve(x+ (Time.deltaTime*0.3f)));
         }else{
             BezierPoint.transform.position = startPointList[startPointCount-1].transform.position;
             if(formular != null){
